@@ -22,21 +22,18 @@
 			"secretAccessKey": "2Jsk7WkEKwaOflMWj+1RQ6+Q2U/FbwDesykJUSVP"
 		}
 	},
-	"celltrust": {
-		"host": "gateway.celltrust.net",
-		"path": "/TxTNotify/TxTNotify?",
-		"creds": {
-			"Username": "sdieventlink",
-			"Password": "datebooks",
-			"CustomerNickname": "sdieventlink"
-		}
+	"clever": {
+		"host": "api.clever.com",
+		"port": 80,
+		"apiPath": "/v1.1",
+		"ssl":true,
+		"key": "DEMO_KEY"
 	},
-	"mongo": {
-		"host": "localhost",
-		"database": "mrPostman",
-		"creds": {
-			"Username": "logger",
-			"Password": "logger"
-		}
-	}	
+	"pinwheel": {
+		"url": "localhost",
+		"port": 3000,
+		"apiPath": "/",
+		"ssl":false,
+		"key": "grandinquisitor:a8070748a060e887536d8f76dc53942f83fddc8744341e8960bcf0cd93ea525e"
+	},
 }
