@@ -53,19 +53,18 @@ function resource(options){
 		delete options.xmlOrJson;
 	}
 	this.opts = options;
-	if (!options.port)
-		this.opts.port = 80;
+
 }
 
 
 resource.prototype.makeRequest = function(verb,path,data) {
 	this.opts.path = this.apiPath+path;
 	this.opts.method=verb;
-	if(verb=="get"){
+	if(verb=="GET"){
 		for(key in data){
 			data[key] = JSON.stringify(data[key]);
 		}
-		this.opts.path = this.opts.path+"?"+querystring.stringify(query);
+		this.opts.path = this.opts.path+"?"+querystring.stringify(data);
 	}
 	this.opts.body = BufferStream(JSON.stringify(data), "utf-8");
 	if (this.xmlOrJson) {var xmlOrJson = this.xmlOrJson; }

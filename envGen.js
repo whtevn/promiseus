@@ -7,7 +7,13 @@ module.exports = function(file){
 
 module.exports.prototype.register = function(name, obj){
 	this[name] = this.readCredentialFile.then(function(creds){
-		return new obj(creds);
+		creds = JSON.parse(creds);
+		var t = new obj(creds[name]);
+		t.patch = function(name, func){
+			t['_'+name] = t[name];
+			t[name] = func;
+		}
+		return t
 	});
 	this.listOfRegisteredEnvVars.push(name);
 	return this[name];
