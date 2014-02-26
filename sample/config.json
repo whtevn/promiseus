@@ -1,0 +1,42 @@
+{
+	"queue": {
+		"url": "https://sqs.us-east-1.amazonaws.com/907059512628/com_schooldatebooks_pinwheel_mrPostman",
+		"creds": {
+			"accessKeyId": "AKIAJB23KHMJHZIRIVYA",
+			"secretAccessKey": "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",
+			"region": "us-east-1"
+		}
+	},
+	"bucket": {
+		"url": "mrPostmanPayloads",
+		"creds": {
+			"accessKeyId": "AKIAJB23KHMJHZIRIVYA",
+			"secretAccessKey": "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",
+			"region": "us-east-1"
+		}
+	},
+	"ses": {
+		"source": "noreply@sdicg.com",
+		"creds": {
+			"accessKeyId": "AKIAJB23KHMJHZIRIVYA",
+			"secretAccessKey": "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"
+		}
+	},
+	"celltrust": {
+		"host": "gateway.celltrust.net",
+		"path": "/TxTNotify/TxTNotify?",
+		"creds": {
+			"Username": "sdieventlink",
+			"Password": "datebooks",
+			"CustomerNickname": "sdieventlink"
+		}
+	},
+	"mongo": {
+		"host": "localhost",
+		"database": "mrPostman",
+		"creds": {
+			"Username": "logger",
+			"Password": "logger"
+		}
+	}	
+}

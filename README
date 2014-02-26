@@ -1,0 +1,5 @@
+PROMISEUS
+---------
+
+library of wrappers for setting up a project to use promises for environment setup, 
+api resources, and aws requests
