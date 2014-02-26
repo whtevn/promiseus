@@ -1,6 +1,7 @@
 {
   "name": "promiseus",
   "version": "0.0.1",
+	"main": "index.js",
   "dependencies": {
     "q-io": "~1.11.0",
     "aws-sdk": "~2.0.0-rc9",

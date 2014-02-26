@@ -2,7 +2,6 @@ var fs = require('q-io/fs');
 
 module.exports = function(file){
 	this.readCredentialFile = fs.read(file),
-	this.registeredEnvVars = {};
 	this.listOfRegisteredEnvVars = [];
 }
 
@@ -11,7 +10,6 @@ module.exports.prototype.register = function(name, obj){
 		return new obj(creds);
 	});
 	this.listOfRegisteredEnvVars.push(name);
-
 	return this[name];
 }
 
