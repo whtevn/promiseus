@@ -27,6 +27,14 @@ var https = require('q-io/http'),
  */
 
 function resource(options){
+	// TODO:
+	// 	add default headers to creds
+	// 	headers: {
+	// 		request: {
+	// 		},
+	// 		response: {
+	// 		}
+	// 	}
 	var key;
 	if(options.auth){
 		if(typeof options.auth == "string"){
@@ -54,18 +62,21 @@ function resource(options){
 resource.prototype.makeRequest = function(verb,path,data) {
 	this.opts.path = this.apiPath+path;
 	this.opts.method=verb;
+	// TODO: find merge option ///////////
+	this.opts.headers.merge(data.headers);
+	//////////////////////////////////////
 	if(data.query){
 		for(key in data.query){
 			data.query[key] = JSON.stringify(data.query[key]);
 		}
 		this.opts.path = this.opts.path+"?"+querystring.stringify(data.query);
 	}
-	if(data.body){
-		this.opts.body = BufferStream(JSON.stringify(data.body), "utf-8");
-	}
-	var responseObj = {};
+	this.opts.body = processByMimeType.request(data);
+
+
+
 	return https.request(this.opts)
-		.then(processByMimeType)
+		.then(processByMimeType.response)
 		.fail(function(err){
 			console.log(err.stack);
 		});
