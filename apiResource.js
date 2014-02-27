@@ -1,7 +1,7 @@
-var https = require('q-io/http');
-var querystring = require('querystring');
-var BufferStream = require("q-io/buffer-stream");
-var libxmljs = require('libxmljs');
+var https = require('q-io/http'),
+    querystring = require('querystring'),
+    BufferStream = require("q-io/buffer-stream"),
+    processByMimeType = require("./lib/mimeProcessor")
 
 /**
  * module: ApiResource
@@ -14,7 +14,6 @@ var libxmljs = require('libxmljs');
  *		apiPath: '/v1.1/',
  *		ssl: true,
  *		auth: "Username:Pass",
- *		(xmlOrJson: 'JSON')
  *	});
  *
  *	var obj = resource.get('object') //=> returns promise for
@@ -48,45 +47,28 @@ function resource(options){
 	}else{
 		this.apiPath = '/';
 	}
-	if(options.xmlOrJson){
-		this.xmlOrJson = options.xmlOrJson;
-		delete options.xmlOrJson;
-	}
 	this.opts = options;
-
 }
 
 
 resource.prototype.makeRequest = function(verb,path,data) {
 	this.opts.path = this.apiPath+path;
 	this.opts.method=verb;
-	if(verb=="GET"){
-		for(key in data){
-			data[key] = JSON.stringify(data[key]);
+	if(data.query){
+		for(key in data.query){
+			data.query[key] = JSON.stringify(data.query[key]);
 		}
-		this.opts.path = this.opts.path+"?"+querystring.stringify(data);
+		this.opts.path = this.opts.path+"?"+querystring.stringify(data.query);
 	}
-	this.opts.body = BufferStream(JSON.stringify(data), "utf-8");
-	if (this.xmlOrJson) {var xmlOrJson = this.xmlOrJson; }
+	if(data.body){
+		this.opts.body = BufferStream(JSON.stringify(data.body), "utf-8");
+	}
 	var responseObj = {};
-	return https.request(this.opts).then(function(response){
-		responseObj.status = response.status;
-		return response.body.read().then(function(readResponse){
-			responseObj.data = readResponse.toString('utf8');
-			if (xmlOrJson){
-				if (xmlOrJson == "JSON") { responseObj.data = JSON.parse(readResponse.toString('utf8')); }
-				if (xmlOrJson == "XML") { responseObj.data = libxmljs.parseXml(readResponse.toString('utf-8')); }
-			}else{
-				responseObj.data = readResponse.toString('utf8');
-			}
+	return https.request(this.opts)
+		.then(processByMimeType)
+		.fail(function(err){
+			console.log(err.stack);
 		});
-	}).then(function(){
-		return responseObj;
-	})
-	.fail(function(err){
-		console.log(err.stack);
-	});
-	
 }
 
 resource.prototype.post = function(path,data){
