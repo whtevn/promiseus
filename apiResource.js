@@ -1,7 +1,8 @@
 var https = require('q-io/http'),
     querystring = require('querystring'),
     BufferStream = require("q-io/buffer-stream"),
-    processByMimeType = require("./lib/mimeProcessor")
+    processByMimeType = require("./lib/mimeProcessor"),
+		extend = require('underscore').extend;
 
 /**
  * module: ApiResource
@@ -27,56 +28,66 @@ var https = require('q-io/http'),
  */
 
 function resource(options){
-	// TODO:
-	// 	add default headers to creds
-	// 	headers: {
-	// 		request: {
-	// 		},
-	// 		response: {
-	// 		}
-	// 	}
 	var key;
-	if(options.auth){
-		if(typeof options.auth == "string"){
-			key = options.auth;
-			if(!key.match(":")){
-				key = key+":";
-			}
-		}else{
-			key = options.auth.key+':'+(options.auth.pwd||'');
-		}
-		options.headers = options.headers||{};
-		options.headers['Authorization'] = 'Basic ' + new Buffer(key).toString('base64')
-		delete options.auth;
-	}
-	if(options.apiPath){
-		this.apiPath = options.apiPath; 
-		delete options.apiPath;
+	options.headers = (options.headers||{});
+	this.requestBase = {
+		host: options.host,
+		ssl: options.ssl,
+		path: (options.path||'/'),
+		headers: {}
+	};
+	if(options.headers.request||options.headers.response){
+		this.requestBase.headers.request  = (options.headers.request ||{})	
+		this.requestBase.headers.response = (options.headers.response||{})	
 	}else{
-		this.apiPath = '/';
+		this.requestBase.headers.request  = options.headers;
+		this.requestBase.headers.response = options.headers;
 	}
-	this.opts = options;
+	if(options.auth){
+		this.requestBase.headers.request.Authorization = this.authorize(options.auth);
+	}
+}
+
+resource.prototype.authorize = function(auth){
+	if(typeof auth == "string"){
+		key = auth;
+		if(!key.match(":")){
+			key = key+":";
+		}
+	}else{
+		key = auth.key+':'+(auth.pwd||'');
+	}
+	return 'Basic ' + new Buffer(key).toString('base64') 
 }
 
 
 resource.prototype.makeRequest = function(verb,path,data) {
-	this.opts.path = this.apiPath+path;
-	this.opts.method=verb;
-	// TODO: find merge option ///////////
-	this.opts.headers.merge(data.headers);
-	//////////////////////////////////////
+	var headers, request = extend({}, this.requestBase);
+	request.headers = request.headers.request;
+	request.path    = request.path+path;
+	request.method  = verb;
+
+	data = (data||{});
+	data.headers = (data.headers||{});
+	if(data.headers.request || data.headers.response){
+		extend(request.headers, (data.headers.request||{})); 
+	}else{
+		extend(request.headers, data.headers); 
+	}
 	if(data.query){
 		for(key in data.query){
 			data.query[key] = JSON.stringify(data.query[key]);
 		}
-		this.opts.path = this.opts.path+"?"+querystring.stringify(data.query);
+		request.path = request.path+"?"+querystring.stringify(data.query);
 	}
-	this.opts.body = processByMimeType.request(data);
+	if(data.body){
+		request.body = processByMimeType.request(data.body);
+	}
 
-
-
-	return https.request(this.opts)
-		.then(processByMimeType.response)
+	return https.request(request)
+		.then(function(response){
+			return processByMimeType.response(response);
+		})
 		.fail(function(err){
 			console.log(err.stack);
 		});
