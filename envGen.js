@@ -1,4 +1,5 @@
-var fs = require('q-io/fs');
+var fs = require('q-io/fs'),
+		Q  = require('q');
 
 module.exports = function(file){
 	this.readCredentialFile = fs.read(file),
@@ -19,10 +20,6 @@ module.exports.prototype.register = function(name, obj){
 	return this[name];
 }
 
-module.exports.prototype.loaded = function(injectors, func){
-	// look through all promises
-	// do function, inject in order
-	//
-	// if no injectors are given, get all and load in register order
-	// given in this.listOfRegisteredEventVars
+module.exports.prototype.loaded = function(injectors){
+	return Q.all(injectors||this.listOfRegisteredEnvVars);
 }
