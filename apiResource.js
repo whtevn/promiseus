@@ -34,6 +34,7 @@ function resource(options){
 		host: options.host,
 		ssl: options.ssl,
 		path: (options.path||'/'),
+		port: (options.port||80),
 		headers: {}
 	};
 	if(options.headers.request||options.headers.response){
