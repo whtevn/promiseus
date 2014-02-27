@@ -1,6 +1,5 @@
 var https = require('q-io/http'),
     querystring = require('querystring'),
-    BufferStream = require("q-io/buffer-stream"),
     processByMimeType = require("./lib/mimeProcessor"),
 		extend = require('underscore').extend;
 
