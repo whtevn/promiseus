@@ -1,6 +1,5 @@
 var https = require('q-io/http'),
     querystring = require('querystring'),
-    BufferStream = require("q-io/buffer-stream"),
     processByMimeType = require("./lib/mimeProcessor"),
 		extend = require('underscore').extend;
 
@@ -34,6 +33,7 @@ function resource(options){
 		host: options.host,
 		ssl: options.ssl,
 		path: (options.path||'/'),
+		port: (options.port||80),
 		headers: {}
 	};
 	if(options.headers.request||options.headers.response){
