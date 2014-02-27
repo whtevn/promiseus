@@ -1,40 +1,42 @@
 {
   "name": "promiseus",
-	"description": "promise oriented wrappers for api resources and aws services",
+  "description": "promise oriented wrappers for api resources and aws services",
   "version": "0.0.2",
-	"homepage": "https://github.com/sdicgdev/promiseus",
-	"preferGlobal": false,
-	"repository": {
-		"type":"git"
-		"url":"https://github.com/sdicgdev/promiseus"
-	},
- "bugs": {
-		"url": "https://github.com/sdicgdev/promiseus/issues"
-	},
- "licenses": [
-		{
-			"type": "MIT",
-			"url": "https://github.com/sdicgdev/promiseus/blob/master/LICENSE"
-		}
-	],
-	"modules": {
-		"envGen": "promiseus/envGen",
-		"bucket": "promiseus/bucket",
-		"apiResource": "promiseus/apiResource",
-		"queue": "promiseus/queue",
-		"ses": "promiseus/ses"
-	},
-	"keywords": [
-		"promises",
-		"api",
-		"resources",
-		"app"],
+  "homepage": "https://github.com/sdicgdev/promiseus",
+  "preferGlobal": false,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sdicgdev/promiseus"
+  },
+  "bugs": {
+    "url": "https://github.com/sdicgdev/promiseus/issues"
+  },
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "https://github.com/sdicgdev/promiseus/blob/master/LICENSE"
+    }
+  ],
+  "modules": {
+    "envGen": "promiseus/envGen",
+    "bucket": "promiseus/bucket",
+    "apiResource": "promiseus/apiResource",
+    "queue": "promiseus/queue",
+    "ses": "promiseus/ses"
+  },
+  "keywords": [
+    "promises",
+    "api",
+    "resources",
+    "app"
+  ],
   "dependencies": {
     "q-io": "~1.11.0",
     "aws-sdk": "~2.0.0-rc9",
     "q": "~1.0.0",
     "node-uuid": "~1.4.1",
-    "libxmljs": "~0.8.1"
+    "libxmljs": "~0.8.1",
+    "underscore": "~1.6.0"
   },
   "devDependencies": {}
 }
