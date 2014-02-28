@@ -3,7 +3,7 @@ var S3 = require('aws-sdk').S3,
 		UUID = require('node-uuid');
 
 module.exports = function(info){
-	this.bucketUrl = info.url;
+	this.bucketUrl = info.name;
 	this.s3     = new S3(info.creds);
 };
 

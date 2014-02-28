@@ -1,7 +1,7 @@
-var https = require('q-io/http');
-var querystring = require('querystring');
-var BufferStream = require("q-io/buffer-stream");
-var libxmljs = require('libxmljs');
+var https = require('q-io/http'),
+    querystring = require('querystring'),
+    processByMimeType = require("./lib/mimeProcessor"),
+		extend = require('underscore').extend;
 
 /**
  * module: ApiResource
@@ -14,7 +14,6 @@ var libxmljs = require('libxmljs');
  *		apiPath: '/v1.1/',
  *		ssl: true,
  *		auth: "Username:Pass",
- *		(xmlOrJson: 'JSON')
  *	});
  *
  *	var obj = resource.get('object') //=> returns promise for
@@ -29,64 +28,71 @@ var libxmljs = require('libxmljs');
 
 function resource(options){
 	var key;
-	if(options.auth){
-		if(typeof options.auth == "string"){
-			key = options.auth;
-			if(!key.match(":")){
-				key = key+":";
-			}
-		}else{
-			key = options.auth.key+':'+(options.auth.pwd||'');
-		}
-		options.headers = options.headers||{};
-		options.headers['Authorization'] = 'Basic ' + new Buffer(key).toString('base64')
-		delete options.auth;
-	}
-	if(options.apiPath){
-		this.apiPath = options.apiPath; 
-		delete options.apiPath;
+	options.headers = (options.headers||{});
+	this.requestBase = {
+		host: options.host,
+		ssl: options.ssl,
+		path: (options.path||'/'),
+		port: (options.port||80),
+		headers: {}
+	};
+	if(options.headers.request||options.headers.response){
+		this.requestBase.headers.request  = (options.headers.request ||{})	
+		this.requestBase.headers.response = (options.headers.response||{})	
 	}else{
-		this.apiPath = '/';
+		this.requestBase.headers.request  = options.headers;
+		this.requestBase.headers.response = options.headers;
 	}
-	if(options.xmlOrJson){
-		this.xmlOrJson = options.xmlOrJson;
-		delete options.xmlOrJson;
+	if(options.auth){
+		this.requestBase.headers.request.Authorization = this.authorize(options.auth);
 	}
-	this.opts = options;
+}
 
+resource.prototype.authorize = function(auth){
+	if(typeof auth == "string"){
+		key = auth;
+		if(!key.match(":")){
+			key = key+":";
+		}
+	}else{
+		key = auth.key+':'+(auth.pwd||'');
+	}
+	return 'Basic ' + new Buffer(key).toString('base64') 
 }
 
 
 resource.prototype.makeRequest = function(verb,path,data) {
-	this.opts.path = this.apiPath+path;
-	this.opts.method=verb;
-	if(verb=="GET"){
-		for(key in data){
-			data[key] = JSON.stringify(data[key]);
-		}
-		this.opts.path = this.opts.path+"?"+querystring.stringify(data);
+	var headers, request = extend({}, this.requestBase);
+	request.headers = request.headers.request;
+	request.path    = request.path+path;
+	request.method  = verb;
+
+	data = (data||{});
+	data.headers = (data.headers||{});
+	if(data.headers.request || data.headers.response){
+		extend(request.headers, (data.headers.request||{})); 
+	}else{
+		extend(request.headers, data.headers); 
 	}
-	this.opts.body = BufferStream(JSON.stringify(data), "utf-8");
-	if (this.xmlOrJson) {var xmlOrJson = this.xmlOrJson; }
-	var responseObj = {};
-	return https.request(this.opts).then(function(response){
-		responseObj.status = response.status;
-		return response.body.read().then(function(readResponse){
-			responseObj.data = readResponse.toString('utf8');
-			if (xmlOrJson){
-				if (xmlOrJson == "JSON") { responseObj.data = JSON.parse(readResponse.toString('utf8')); }
-				if (xmlOrJson == "XML") { responseObj.data = libxmljs.parseXml(readResponse.toString('utf-8')); }
-			}else{
-				responseObj.data = readResponse.toString('utf8');
+	if(data.query){
+		for(key in data.query){
+			if(typeof data.query[key]!='string' && typeof data.query[key]!='number'){
+				data.query[key] = JSON.stringify(data.query[key]);
 			}
+		}
+		request.path = request.path+"?"+querystring.stringify(data.query);
+	}
+	if(data.body){
+		request.body = [processByMimeType.request(request, data.body)];
+	}
+
+	return https.request(request)
+		.then(function(response){
+			return processByMimeType.response(response);
+		})
+		.fail(function(err){
+			console.log(err.stack);
 		});
-	}).then(function(){
-		return responseObj;
-	})
-	.fail(function(err){
-		console.log(err.stack);
-	});
-	
 }
 
 resource.prototype.post = function(path,data){
