@@ -1,6 +1,5 @@
 var https = require('q-io/http'),
     querystring = require('querystring'),
-    BufferStream = require("q-io/buffer-stream"),
     processByMimeType = require("./lib/mimeProcessor"),
 		extend = require('underscore').extend;
 
@@ -77,12 +76,14 @@ resource.prototype.makeRequest = function(verb,path,data) {
 	}
 	if(data.query){
 		for(key in data.query){
-			data.query[key] = JSON.stringify(data.query[key]);
+			if(typeof data.query[key]!='string' && typeof data.query[key]!='number'){
+				data.query[key] = JSON.stringify(data.query[key]);
+			}
 		}
 		request.path = request.path+"?"+querystring.stringify(data.query);
 	}
 	if(data.body){
-		request.body = processByMimeType.request(data.body);
+		request.body = [processByMimeType.request(request, data.body)];
 	}
 
 	return https.request(request)
