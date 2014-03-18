@@ -36,7 +36,8 @@
     "q": "~1.0.0",
     "node-uuid": "~1.4.1",
     "libxmljs": "~0.8.1",
-    "underscore": "~1.6.0"
+    "underscore": "~1.6.0",
+    "mongo-q": "0.0.2"
   },
   "devDependencies": {}
 }
