@@ -14,7 +14,7 @@ module.exports.prototype.register = function(name, obj){
 			t['_'+name] = t[name];
 			t[name] = func;
 		}
-		t._options = creds;
+		t._options = creds[name];
 		return t
 	});
 	this.listOfRegisteredEnvVars.push(name);
