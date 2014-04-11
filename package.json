@@ -1,7 +1,7 @@
 {
   "name": "promiseus",
   "description": "promise oriented wrappers for api resources and aws services",
-  "version": "0.0.9",
+  "version": "0.0.15",
   "homepage": "https://github.com/sdicgdev/promiseus",
   "preferGlobal": false,
   "repository": {

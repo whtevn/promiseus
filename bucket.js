@@ -18,6 +18,7 @@ module.exports.prototype.get = function(key){
 }
 
 module.exports.prototype.save = function(value){
+	var key;
 	if (arguments[1]) {
 		key = arguments[1];
 	} else {
