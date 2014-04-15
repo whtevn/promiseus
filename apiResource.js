@@ -36,6 +36,11 @@ function resource(options){
 		port: (options.port||80),
 		headers: {}
 	};
+
+	if(options.options){
+		extend(this.requestBase, options.options);
+	}
+
 	if(options.headers.request||options.headers.response){
 		this.requestBase.headers.request  = (options.headers.request ||{})	
 		this.requestBase.headers.response = (options.headers.response||{})	
