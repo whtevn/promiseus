@@ -1,7 +1,8 @@
 var https = require('q-io/http'),
     querystring = require('querystring'),
     processByMimeType = require("./lib/mimeProcessor"),
-		extend = require('underscore').extend;
+		extend = require('underscore').extend,
+		httpAgent = require('https');
 
 /**
  * module: ApiResource
@@ -40,6 +41,8 @@ function resource(options){
 	if(options.options){
 		extend(this.requestBase, options.options);
 	}
+
+	this.requestBase.agent = new httpAgent(this.requestBase);
 
 	if(options.headers.request||options.headers.response){
 		this.requestBase.headers.request  = (options.headers.request ||{})	
