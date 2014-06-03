@@ -42,7 +42,9 @@ function resource(options){
 		extend(this.requestBase, options.options);
 	}
 
-	this.requestBase.agent = new httpAgent.Agent(this.requestBase);
+	if(options.ssl){
+		this.requestBase.agent = new httpAgent.Agent(this.requestBase);
+	}
 
 	if(options.headers.request||options.headers.response){
 		this.requestBase.headers.request  = (options.headers.request ||{})	
