@@ -1,7 +1,7 @@
 {
   "name": "promiseus",
   "description": "promise oriented wrappers for api resources and aws services",
-  "version": "0.0.19",
+  "version": "0.0.20",
   "homepage": "https://github.com/sdicgdev/promiseus",
   "preferGlobal": false,
   "repository": {
@@ -35,7 +35,6 @@
     "aws-sdk": "~2.0.0-rc9",
     "q": "~1.0.0",
     "node-uuid": "~1.4.1",
-    "libxmljs": "~0.8.1",
     "underscore": "~1.6.0",
     "mongo-q": "0.0.2"
   },
